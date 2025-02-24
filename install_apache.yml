@@ -2,16 +2,30 @@
 
 - hosts: all
   become: true
+  pre_tasks:
+
+  - name install updates (Ubuntu)
+  apt:
+    upgrade: dist
+    upgrade_cahce: yes
+
+- host: Vm_servers
+  become: true
   tasks:
-
-  - name: install apache2 package
-    apt:
-      name: apache2
+  - name: install apache2 pnd php package
+    package:
+      name:
+        - apache2 
+        - libapache2-mod-php 
       state: latest
+    when: ansible_distribution == "Ubuntu" 
 
-
-  - name: add php support for apache
-    apt:
-     name: libapache2-mod-php
-     state: latest
-
+- host: Azure_servers
+  become: true
+  tasks:
+  - name: install mariadb package
+    package:
+      name:
+        -  mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
