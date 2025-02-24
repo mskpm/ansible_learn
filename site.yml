@@ -5,6 +5,9 @@
   pre_tasks:
 
   - name: install updates (Ubuntu)
+    
+    tags: Ubuntu,apache2,db
+    
     apt:
       upgrade: dist
       update_cache: yes
@@ -14,6 +17,9 @@
   become: true
   tasks:
   - name: install apache2 and php package
+    
+    tags: Ubuntu,apache2,vm-local,vm
+    
     package:
       name:
         - apache2 
@@ -24,7 +30,10 @@
 - hosts: Azure_servers
   become: true
   tasks:
-  - name: install aoache2 an php package
+  - name: install apache2 an php package
+
+    tags: Ubuntu,apache2,vm-azure,vm
+    
     package:
       name:
         - apache2 

@@ -1,6 +1,6 @@
 [Vm_servers]
-192.168.98.2 apache_package=apache2 php_package=libapache2-mod-php
+192.168.98.2
 
 [Azure_servers]
-74.235.230.204 apache_package=apache2 php_package=libapache2-mod-php
+4.227.217.52 ansible_user=azureuser 
 
