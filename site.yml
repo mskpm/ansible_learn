@@ -30,7 +30,7 @@
 - hosts: Azure_servers
   become: true
   tasks:
-  - name: install apache2 an php package
+  - name: install apache2 and php package
 
     tags: Ubuntu,apache2,vm-azure,vm
     
@@ -39,4 +39,14 @@
         - apache2 
         - libapache2-mod-php
       state: latest
+  - name: upload default test page
+
+    tags: Ubuntu,apache2,vm-azure,vm
+    copy: 
+      src: /var/www/html/index.html 
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 644 
+
     when: ansible_distribution == "Ubuntu"
