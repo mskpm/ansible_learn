@@ -1,0 +1,37 @@
+- name: install apache2 and php package
+  tags: Ubuntu,apache2,vm-local,vm
+       
+  apt:
+    name:
+      - apache2 
+      - libapache2-mod-php 
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: change KeepAliveTimeout 5 -> 10
+  tags: apache, apache2, Ubuntu, vm-local, vm
+
+  lineinfile:
+    path: /etc/apache2/apache2.conf
+    regexp: '^KeepAliveTimeout'
+    line: KeepAliveTimeout 10
+  when: ansible_distribution == "Ubuntu"
+  register: httpd
+
+- name: restart httpd (Ubuntu)
+  tags: apache, apache2, Ubuntu, vm-local, vm
+
+  service:
+    name: apache2.service
+    state: restarted
+  when: httpd.changed
+
+- name: upload default test page
+  tags: Ubuntu,apache2,vm-azure,vm
+    
+  copy: 
+    src: /var/www/html/index.html 
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 644

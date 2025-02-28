@@ -1,0 +1,78 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update cache (Ubuntu)
+    
+    tags: Ubuntu,apache2,db
+    
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:  
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILm31uP67g37crnRNsGPzxzCwNeWIPW1RiPaEe/GthPk ansible"
+
+- hosts: Vm_servers
+  become: true
+  tasks:
+    - name: install apache2 and php package
+      tags: Ubuntu,apache2,vm-local,vm
+       
+      apt:
+        name:
+          - apache2 
+          - libapache2-mod-php 
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: change KeepAliveTimeout 5 -> 10
+      tags: apache, apache2, Ubuntu, vm-local, vm
+
+      lineinfile:
+        path: /etc/apache2/apache2.conf
+        regexp: '^KeepAliveTimeout'
+        line: KeepAliveTimeout 10
+      when: ansible_distribution == "Ubuntu"
+      register: httpd
+
+    - name: restart httpd (Ubuntu)
+      tags: apache, apache2, Ubuntu, vm-local, vm
+
+      service:
+        name: apache2.service
+        state: restarted
+      when: httpd.changed
+
+    - name: upload default test page
+      tags: Ubuntu,apache2,vm-azure,vm
+    
+      copy: 
+        src: /var/www/html/index.html 
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 644 
+
+- hosts: Azure_servers
+  become: true
+  tasks:
+    - name: install apache2 and php package on Azure-vm
+      tags: Ubuntu,apache2,vm-azure,vm
+    
+      apt:
+        name:
+          - apache2 
+          - libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
