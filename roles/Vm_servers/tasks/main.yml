@@ -1,10 +1,10 @@
 - name: install apache2 and php package
   tags: Ubuntu,apache2,vm-local,vm
        
-  apt:
+  package:
     name:
-      - apache2 
-      - libapache2-mod-php 
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}" 
     state: latest
   when: ansible_distribution == "Ubuntu"
 
@@ -12,19 +12,19 @@
   tags: apache, apache2, Ubuntu, vm-local, vm
 
   lineinfile:
-    path: /etc/apache2/apache2.conf
-    regexp: '^KeepAliveTimeout'
-    line: KeepAliveTimeout 10
+    path: /etc/apache2/sites-available/000-default.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin someone@somewhere.net
   when: ansible_distribution == "Ubuntu"
-  register: httpd
+  notify: restart_apache
 
-- name: restart httpd (Ubuntu)
+- name: start and enable apache service (Ubuntu)
   tags: apache, apache2, Ubuntu, vm-local, vm
 
   service:
-    name: apache2.service
-    state: restarted
-  when: httpd.changed
+    name: "{{ apache_service }}"
+    state: started
+    enabled: yes
 
 - name: upload default test page
   tags: Ubuntu,apache2,vm-azure,vm
@@ -35,3 +35,13 @@
     owner: root
     group: root
     mode: 644
+
+- name: install zippackage (7zip)
+  tags: Ubuntu, file-servwers, 7zip
+
+  package:
+    name:
+      - "{{ zip_package }}"
+    state: latest
+  when:  ansible_facts.eth0.ipv4.address == "192.168.98.3"
+
