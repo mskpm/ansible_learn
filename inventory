@@ -2,7 +2,20 @@
 192.168.98.2
 192.168.98.3
 
-[Azure_servers]
-4.227.217.52 ansible_user=azureuser 
-#4.227.217.52
 
+[WinSrv_Vm]
+192.168.98.4
+
+[WinSrv_Vm:vars]
+#------------------------
+ansible_host=192.168.98.4
+ansible_user=administrator
+ansible_password=Gerald[20]
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_port=5986
+ansible_winrm_server_cert_validation=ignore
+ansible_winrm_scheme=https
+ansible_become_method=runas
+ansible_become_user=administrator
+#------------------------

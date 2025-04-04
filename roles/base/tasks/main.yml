@@ -1,11 +1,17 @@
-  - name: add ssh key for simone
-    tags: always
+  - name: create user ansible
+    tags: ubuntu
+    user:
+      name: ansible
+      groups: root
+
+  - name: add ssh key for ansible
+    tags: ubuntu
     authorized_key:
-      user: simone
+      user: ansible
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILm31uP67g37crnRNsGPzxzCwNeWIPW1RiPaEe/GthPk ansible"
 
   - name: generate sshd_config file from template
-    tags: ssh
+    tags: ssh,ubuntu
     template:
       src: "{{ ssh_template_file }}"
       dest: /etc/ssh/sshd_config

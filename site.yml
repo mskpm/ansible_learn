@@ -25,7 +25,9 @@
     - Vm_servers
 
 
-- hosts: Azure_servers
+- hosts: WinSrv_Vm
   become: true
+  become_method: runas
+  become_user: administrator
   roles:
-    - Azure_servers
+    - WinSrv_Vm

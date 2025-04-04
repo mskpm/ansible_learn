@@ -1,0 +1,18 @@
+- name: Install 7zip
+  tags: 7zip,vm
+  ansible.windows.win_package:
+    path: https://www.7-zip.org/a/7z2200-x64.msi
+    product_id: '7-Zip 22.00  (64 bit)'
+    state: present
+    arguments: /qn /norestart
+
+- name: Get whoami information
+  tags: vm,whoami
+  win_whoami: 
+  register: whoami_base
+
+- name: output base user
+  tags: whoami
+  debug:
+    msg: "{{ {'User name':whoami_base.account.account_name,'Computer name':whoami_base.logon_server} }}"
+
